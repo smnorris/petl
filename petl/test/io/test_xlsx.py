@@ -83,6 +83,21 @@ else:
         actual = fromxlsx(f.name)
         ieq(tbl, actual)
 
+    def test_toxlsx_append():
+        tbl = (('foo', 'bar'),
+               ('A', 1),
+               ('B', 2),
+               ('C', 2),
+               (u'é', datetime(2012, 1, 1)))
+        f = NamedTemporaryFile(delete=False, suffix='.xlsx')
+        f.close()
+        toxlsx(tbl, f.name, 'Sheet1')
+        toxlsx(tbl, f.name, 'Sheet2')
+        actual1 = fromxlsx(f.name, 'Sheet1')
+        actual2 = fromxlsx(f.name, 'Sheet1')
+        ieq(tbl, actual1)
+        ieq(tbl, actual2)
+
     def test_integration():
         tbl = (('foo', 'bar'),
                ('A', 1),

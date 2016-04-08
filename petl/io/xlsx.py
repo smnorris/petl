@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, division
 
-
+import os
 import locale
 
 
@@ -12,7 +12,7 @@ def fromxlsx(filename, sheet=None, range_string=None, row_offset=0,
              column_offset=0, **kwargs):
     """
     Extract a table from a sheet in an Excel .xlsx file.
-    
+
     N.B., the sheet name is case sensitive.
 
     The `sheet` argument can be omitted, in which case the first sheet in
@@ -35,7 +35,7 @@ def fromxlsx(filename, sheet=None, range_string=None, row_offset=0,
 
 
 class XLSXView(Table):
-    
+
     def __init__(self, filename, sheet=None, range_string=None,
                  row_offset=0, column_offset=0, **kwargs):
         self.filename = filename
@@ -71,7 +71,10 @@ def toxlsx(tbl, filename, sheet=None, encoding=None):
     import openpyxl
     if encoding is None:
         encoding = locale.getpreferredencoding()
-    wb = openpyxl.Workbook(optimized_write=True, encoding=encoding)
+    if not os.path.exists(filename):
+        wb = openpyxl.Workbook(optimized_write=True, encoding=encoding)
+    else:
+        wb = openpyxl.load_workbook(filename=filename)
     ws = wb.create_sheet(title=sheet)
     for row in tbl:
         ws.append(row)
